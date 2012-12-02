@@ -1,0 +1,91 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Web Based Entity Resolution Framework</title>
+
+<meta name="viewport" content="width-device-width, initial-scale=1.0">
+<meta name="description" content="">
+<meta name="keywords" content="">
+
+<link rel="stylesheet" href="bootstrap/css/bootstrap.css">
+
+<script src="http://code.jquery.com/jquery-latest.js"></script>
+</head>
+
+<body>
+	<center>
+	<div class="hero-unit">
+	<h2>Web Based Entity Resolution</h2>
+	</div>
+	</center>
+	<div class="container">
+		<!--<form class="form-inline">-->
+		<div class="row">
+			<div class="span4">
+				<textarea name="entity-records" id="entity-records" class="span4" rows="15" cols="20" placeholder="Enter the Entity Records Here..."></textarea> 
+			</div>
+			<div class="span2">
+				<br/><br/><br/><br/><br/><br/><br/><br/>
+				<button id="processResult" class="btn btn-primary">Process Results</button>
+			</div>
+			<div class="span5">
+				<textarea name="clusters" id="clusters" class="span5" rows="20" cols="25" placeholder="Processed Clusters will be displayed here..."></textarea> 
+			</div>
+		</div>
+		<!--</form>-->
+	</div>
+
+	
+	<script type="text/javascript">
+
+	
+	$( "#processResult" ).click(function() {
+        	processQuery(entityRecords.val());
+    });
+	
+	var entityRecords = $( "#entity-records" );
+	
+	function createXMLHttpRequest() {
+		if (window.ActiveXObject) {
+			try {
+				xmlHttp = new ActiveXObject("Microsoft.XMLHTTP");
+    	    } catch(e) {
+        	     try {
+            	     xmlHttp=new ActiveXObject("Msxml2.XMLHTTP");
+             	} catch(e) {
+	                alert("Your browser does not support AJAX!");
+             	}
+    	    }
+    	} else if (window.XMLHttpRequest) {
+        	xmlHttp = new XMLHttpRequest();
+	   } else {
+    	  alert("Your browser does not support AJAX!");
+   	   }	
+	}
+	
+	function processQuery(entityRecords) {
+		//alert("Entity Records: "+entityRecords);
+		var ertext = entityRecords.replace(/\r\n|\r|\n/g,"<br />")
+		createXMLHttpRequest();
+    	var url = "MainController?records="+ertext;
+    	//alert(ertext);
+   		xmlHttp.onreadystatechange = displayResults
+   		xmlHttp.open("POST", url, false);
+   		xmlHttp.send();
+	}
+	
+	function displayResults() {
+		if (xmlHttp.readyState == 4) {
+			if (xmlHttp.status == 200) {
+				var clusterId = $( "#clusters" );
+				var clusterData = xmlHttp.responseText;
+				clusterId.val(clusterId.val() + clusterData);
+				//alert("Result: "+clusterData);
+			}
+		}
+	}
+	
+	</script>
+	<script src="bootstrap/js/bootstrap.js"></script>	
+</body>
+</html>
